@@ -5,6 +5,7 @@ using LunaSphere.Api.Controllers;
 using LunaSphere.Api.Responses;
 using LunaSphere.Application.Auth.Commands.RegisterCommand;
 using LunaSphere.Application.Auth.DTOs;
+using System.Net;
 
 namespace LunaSphere.Controllers;
 
@@ -27,7 +28,7 @@ public class AuthController : ApiController
         var result = await _mediator.Send(command);
 
         Func<AuthDTO, IActionResult> response = (authDTO) => 
-            Ok(new ApiResponse<AuthDTO>(authDTO));
+            Ok(new ApiResponse<AuthDTO>(authDTO, HttpStatusCode.Created));
         
         return result.Match(
             response, 
