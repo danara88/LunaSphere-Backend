@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  db:
+    container_name: luna-sphere-db
+    image: postgres:14.14-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: LunaSphere
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: LunaSphereDB
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
