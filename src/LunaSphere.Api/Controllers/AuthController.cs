@@ -21,6 +21,7 @@ public class AuthController : ApiController
     [HttpPost("~/api/v1/auth/register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> Register([FromBody] RegisterUserDTO registerUserDTO)
     {
