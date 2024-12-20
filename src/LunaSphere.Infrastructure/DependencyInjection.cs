@@ -7,6 +7,7 @@ using LunaSphere.Application.Common.Interfaces;
 using LunaSphere.Infrastructure.Common.Persistence;
 using LunaSphere.Infrastructure.Auth.TokenGenerator;
 using LunaSphere.Infrastructure.Auth.PasswordHasher;
+using LunaSphere.Infrastructure.Auth.GoogleAuth;
 
 
 namespace LunaSphere.Infrastructure;
@@ -25,6 +26,10 @@ public static class DependencyInjection
         // JWT configuration
         services.AddTransient<IJwtFactory, JwtFactory>();
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+
+        // Google auth configuration
+        services.Configure<GoogleAuthSettings>(configuration.GetSection("GoogleAuthSettings"));
+        services.AddTransient<IGoogleAuthService, GoogleAuthService>();
 
         return services;
     }

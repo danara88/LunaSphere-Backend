@@ -20,6 +20,11 @@ public class UnitOfWork : IUnitOfWork
 
     public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
 
+    public bool HasChanges()
+    {
+       return _context.ChangeTracker.HasChanges();
+    }
+
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();

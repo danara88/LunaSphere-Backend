@@ -9,5 +9,6 @@ namespace LunaSphere.Application.Common.Interfaces;
 public interface IUnitOfWork
 {
     IUserRepository UserRepository { get; }
+    bool HasChanges();
     Task SaveChangesAsync();
 }

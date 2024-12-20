@@ -12,6 +12,7 @@ using LunaSphere.Application.Users.DTOs;
 using LunaSphere.Controllers;
 using LunaSphere.Domain.Users;
 using LunaSphere.Application.Auth.Commands.LoginCommand;
+using LunaSphere.Application.Auth.Commands.GoogleSignInCommand;
 
 namespace LunaSphere.Api.Tests.Unit.Controllers;
 
@@ -130,6 +131,71 @@ public class AuthControllerTests
         {
             Status =StatusCodes.Status401Unauthorized,
             Detail = AuthErrors.InvalidCredentials.Description
+        });
+    }
+
+    [Fact]
+    public async Task GoogleSignIn_ShouldReturnOkObjectResult_WhenTokenIsValid()
+    {
+        // Arrange
+        var mockGoogleSignInDTO = new GoogleSignInDTO(Token: "xyz123xyz");
+        var mockAuthDTO = new AuthDTO
+        (
+            AccessToken: "xyztokenxyz",
+            UserDetails: new UserDTO
+            (
+                FirstName: null,
+                LastName: null,
+                Email: "test@test.com",
+                IsGoogle: true,
+                LastLogin: DateTime.UtcNow
+            )
+        );
+         _mediator.Send(Arg.Any<GoogleSignInCommand>()).Returns(mockAuthDTO);
+
+        // Act
+        var result = (ObjectResult) await _sut.GoogleSignIn(mockGoogleSignInDTO);
+
+        // Assert
+        result.StatusCode.Should().Be(StatusCodes.Status200OK);
+        result.Value.Should().BeEquivalentTo(new ApiResponse<AuthDTO>(mockAuthDTO));
+    }
+
+    [Fact]
+    public async Task GoogleSignIn_ShouldReturnUnAuthorizedWithExpectedMessage_WhenTokenIsInvalid()
+    {
+        // Arrange
+        var mockGoogleSignInDTO = new GoogleSignInDTO(Token: "xyinvalidtokenyz");
+        _mediator.Send(Arg.Any<GoogleSignInCommand>()).Returns(AuthErrors.GoogleInvalidJwtToken);
+
+        // Act
+        var result = (ObjectResult) await _sut.GoogleSignIn(mockGoogleSignInDTO);
+
+        // Assert
+        result.StatusCode.Should().Be(StatusCodes.Status401Unauthorized);
+        result.Value.Should().BeEquivalentTo(new ProblemDetails 
+        {
+            Status =StatusCodes.Status401Unauthorized,
+            Detail = AuthErrors.GoogleInvalidJwtToken.Description
+        });
+    }
+
+    [Fact]
+    public async Task GoogleSignIn_ShouldReturnFailureWithExpectedMessage_WhenGoogleSignInFails()
+    {
+        // Arrange
+        var mockGoogleSignInDTO = new GoogleSignInDTO(Token: "xyinvalidtokenyz");
+        _mediator.Send(Arg.Any<GoogleSignInCommand>()).Returns(AuthErrors.GoogleAuthFailure);
+
+        // Act
+        var result = (ObjectResult) await _sut.GoogleSignIn(mockGoogleSignInDTO);
+
+        // Assert
+        result.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+        result.Value.Should().BeEquivalentTo(new ProblemDetails 
+        {
+            Status =StatusCodes.Status500InternalServerError,
+            Detail = AuthErrors.GoogleAuthFailure.Description
         });
     }
 }

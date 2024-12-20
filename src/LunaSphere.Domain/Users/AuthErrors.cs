@@ -28,4 +28,14 @@ public static class AuthErrors
         code: "Auth.InvalidVerificationToken",
         description: "An error occurred while verifying your account."
     );
+
+    public static readonly Error GoogleInvalidJwtToken = Error.Unauthorized(
+        code: "Auth.GoogleInvalidJwtToken",
+        description: "Google authentication failed because the provided token is invalid."
+    );
+
+    public static readonly Error GoogleAuthFailure = Error.Failure(
+        code: "Auth.GoogleAuthFailure",
+        description: "An unexpected error occurred during google authentication."
+    );
 }
