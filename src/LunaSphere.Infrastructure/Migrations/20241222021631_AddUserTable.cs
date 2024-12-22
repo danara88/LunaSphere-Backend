@@ -31,7 +31,7 @@ namespace LunaSphere.Infrastructure.Migrations
                     PasswordResetToken = table.Column<string>(type: "text", unicode: false, nullable: true),
                     PasswordResetTokenExpires = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false, defaultValue: true),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 11, 30, 4, 54, 30, 491, DateTimeKind.Utc).AddTicks(3160)),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValue: new DateTime(2024, 12, 22, 2, 16, 31, 188, DateTimeKind.Utc).AddTicks(5790)),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>

@@ -33,7 +33,7 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 11, 30, 4, 54, 30, 491, DateTimeKind.Utc).AddTicks(3160));
+                        .HasDefaultValue(new DateTime(2024, 12, 22, 2, 16, 31, 188, DateTimeKind.Utc).AddTicks(5790));
 
                     b.Property<string>("Email")
                         .IsRequired()
