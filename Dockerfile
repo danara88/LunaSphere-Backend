@@ -1,7 +1,7 @@
 # ---------------------------
 # Stage 1: Build
 # ---------------------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY . .
 # Restore all project dependencies
@@ -19,7 +19,7 @@ RUN dotnet publish src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/p
 # ---------------------------
 # Stage 2: Run
 # ---------------------------
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
 WORKDIR /app
 
 # Copy the pusblish project folder
