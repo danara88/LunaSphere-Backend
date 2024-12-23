@@ -1,7 +1,11 @@
-docker-compose.yml
 .gitignore
-Dockerfile
 .git
 
-test/
+docker-compose.yml
+Dockerfile
+
+tests/
 postgres/
+
+README.nd
+.env.example

@@ -4,14 +4,11 @@
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 COPY . .
-# Restore all project dependencies
-RUN dotnet restore
+# Restore api project
+RUN dotnet restore src/LunaSphere.Api/LunaSphere.Api.csproj
 
 # Build web api project
 RUN dotnet build src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/build
-
-# Run unit tests
-RUN dotnet test
 
 # Pubslih web api
 RUN dotnet publish src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/publish --no-restore
@@ -19,7 +16,7 @@ RUN dotnet publish src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/p
 # ---------------------------
 # Stage 2: Run
 # ---------------------------
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:8.0 AS runtime
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
 # Copy the pusblish project folder
