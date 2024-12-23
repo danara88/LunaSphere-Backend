@@ -16,7 +16,7 @@ RUN dotnet publish src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/p
 # ---------------------------
 # Stage 2: Run
 # ---------------------------
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 ENV ASPNETCORE_HTTP_PORTS=5001
 WORKDIR /app
 
