@@ -17,12 +17,12 @@ RUN dotnet publish src/LunaSphere.Api/LunaSphere.Api.csproj -c Release -o /app/p
 # Stage 2: Run
 # ---------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
-ENV ASPNETCORE_HTTP_PORTS=5001
+ENV ASPNETCORE_HTTP_PORTS=8080
 WORKDIR /app
 
 # Copy the pusblish project folder
 COPY --from=build /app/publish .
 
-EXPOSE 5001
+EXPOSE 8080
 ENTRYPOINT ["dotnet","LunaSphere.Api.dll"]
 
