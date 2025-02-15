@@ -22,6 +22,50 @@ namespace LunaSphere.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("LunaSphere.Domain.RefreshTokens.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValue(new DateTime(2025, 2, 14, 20, 39, 50, 199, DateTimeKind.Utc).AddTicks(8680));
+
+                    b.Property<DateTime>("ExperiesAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshToken");
+                });
+
             modelBuilder.Entity("LunaSphere.Domain.Users.User", b =>
                 {
                     b.Property<int>("Id")
@@ -33,7 +77,7 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2024, 12, 22, 2, 16, 31, 188, DateTimeKind.Utc).AddTicks(5790));
+                        .HasDefaultValue(new DateTime(2025, 2, 14, 20, 39, 50, 200, DateTimeKind.Utc).AddTicks(840));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -99,6 +143,23 @@ namespace LunaSphere.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("User");
+                });
+
+            modelBuilder.Entity("LunaSphere.Domain.RefreshTokens.RefreshToken", b =>
+                {
+                    b.HasOne("LunaSphere.Domain.Users.User", "User")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("LunaSphere.Domain.RefreshTokens.RefreshToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("LunaSphere.Domain.Users.User", b =>
+                {
+                    b.Navigation("RefreshToken")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

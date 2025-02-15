@@ -1,5 +1,6 @@
 using LunaSphere.Domain.Common;
-using LunaSphere.Domain.User.Enums;
+using LunaSphere.Domain.Users.Enums;
+using LunaSphere.Domain.RefreshTokens;
 
 namespace LunaSphere.Domain.Users;
 
@@ -70,4 +71,8 @@ public class User : BaseEntity
     /// </summary>
     public DateTime? PasswordResetTokenExpires { get; set; }
 
+    /// <summary>
+    /// Refresh Token navigation property
+    /// </summary>
+    public virtual RefreshToken RefreshToken { get; set; }
 }

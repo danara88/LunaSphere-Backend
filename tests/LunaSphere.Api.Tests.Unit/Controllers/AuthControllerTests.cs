@@ -13,6 +13,7 @@ using LunaSphere.Controllers;
 using LunaSphere.Domain.Users;
 using LunaSphere.Application.Auth.Commands.LoginCommand;
 using LunaSphere.Application.Auth.Commands.GoogleSignInCommand;
+using LunaSphere.Application.Auth.Commands.RefreshTokenCommand;
 
 namespace LunaSphere.Api.Tests.Unit.Controllers;
 
@@ -34,6 +35,7 @@ public class AuthControllerTests
         var mockAuthDTO = new AuthDTO
         (
             AccessToken: "xyztokenxyz",
+            RefreshToken: "xyzrefreshtokenxyz",
             UserDetails: new UserDTO
             (
                 FirstName: null,
@@ -96,6 +98,7 @@ public class AuthControllerTests
          var mockAuthDTO = new AuthDTO
         (
             AccessToken: "xyztokenxyz",
+            RefreshToken: "xyzrefreshtokenxyz",
             UserDetails: new UserDTO
             (
                 FirstName: null,
@@ -142,6 +145,7 @@ public class AuthControllerTests
         var mockAuthDTO = new AuthDTO
         (
             AccessToken: "xyztokenxyz",
+            RefreshToken: "xyzrefreshtokenxyz",
             UserDetails: new UserDTO
             (
                 FirstName: null,
@@ -197,5 +201,25 @@ public class AuthControllerTests
             Status =StatusCodes.Status500InternalServerError,
             Detail = AuthErrors.GoogleAuthFailure.Description
         });
+    }
+
+    [Fact]
+    public async Task RefreshToken_ShouldReturnOkObjectResult_WhenRefreshTokenIsValid()
+    {
+        // Arrange
+        var mockCreateRefreshTokenDTO = new CreateRefreshTokenDTO(RefreshToken: "xyztokenxyz");
+        var mockRefreshTokenDTO = new RefreshTokenDTO
+        (
+            AccessToken: "xyztokenxyz",
+            RefreshToken: "xyznewrefreshtokenxyz"
+        );
+        _mediator.Send(Arg.Any<RefreshTokenCommand>()).Returns(mockRefreshTokenDTO);
+
+        // Act
+        var result = (ObjectResult) await _sut.RefreshToken(mockCreateRefreshTokenDTO);
+
+        // Assert
+        result.StatusCode.Should().Be(StatusCodes.Status200OK);
+        result.Value.Should().BeEquivalentTo(new ApiResponse<RefreshTokenDTO>(mockRefreshTokenDTO));
     }
 }

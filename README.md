@@ -1,6 +1,12 @@
 # Welcome to LunaSphere (backend) 🤘🏼
 
-# Configure local user secrets
+## How to name branches and commits
+
+For branch follow this structure: feat/LS-OOOO-your-branch-description
+
+For commit follow this stcurture: feat(LS-0000): your commit message
+
+## Configure local user secrets
 
 - To run your local, you will need to set up some required user secrets:
 

@@ -1,4 +1,5 @@
 using LunaSphere.Application.Common.Interfaces;
+using LunaSphere.Application.RefreshTokens.Interfaces;
 using LunaSphere.Application.Users.Interfaces;
 
 namespace LunaSphere.Application.Common.Interfaces;
@@ -9,6 +10,7 @@ namespace LunaSphere.Application.Common.Interfaces;
 public interface IUnitOfWork
 {
     IUserRepository UserRepository { get; }
+    IRefreshTokenRepository RefreshTokenRepository { get; }
     bool HasChanges();
     Task SaveChangesAsync();
 }

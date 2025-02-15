@@ -1,4 +1,4 @@
-namespace LunaSphere.Domain.User.Enums;
+namespace LunaSphere.Domain.Users.Enums;
 
 public enum RoleType
 {
