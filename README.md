@@ -1,5 +1,49 @@
 # Welcome to LunaSphere (backend) 🤘🏼
 
+## How to name branches and commits
+
+For branch follow this structure: feat/LS-OOOO-your-branch-description
+
+For commit follow this stcurture: feat(LS-0000): your commit message
+
+## Configure local user secrets
+
+- To run your local, you will need to set up some required user secrets:
+
+If you don't have initialized yet your user secrets, execute the following in the project root.
+
+```
+dotnet user-secrets init -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "JwtSettings:ValidTimeMinutes" "[JwtValidTimeMinutes]" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "JwtSettings:Secret" "[YourSecr3tK3y]" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "JwtSettings:Issuer" "http://localhost:5063" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "JwtSettings:Audience" "http://localhost:4200" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "GoogleAuthSettings:GoogleId" "[YourGoogleIdHere]" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "GoogleAuthSettings:Secret" "[YourGoogleApiSecret]" -p ./src/LunaSphere.Api
+```
+
+```
+dotnet user-secrets set "ConnectionStrings:DefaultDbConnection" "YourDbConnectionStringHere" -p ./src/LunaSphere.Api
+```
+
 ## Docker commands
 
 - If you want to build the image in your local, execute following command in the project root:

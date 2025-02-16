@@ -5,6 +5,8 @@ using System.Text;
 
 using LunaSphere.Infrastructure.Common.Persistence;
 using LunaSphere.Infrastructure.Filters;
+using LunaSphere.Api.Providers;
+using LunaSphere.Application.Users.Interfaces;
 
 namespace LunaSphere.Api;
 
@@ -22,7 +24,10 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddProblemDetails();
+        services.AddHttpContextAccessor();
         services.AddCorsPolicy();
+
+        services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
         
         return services;
     }

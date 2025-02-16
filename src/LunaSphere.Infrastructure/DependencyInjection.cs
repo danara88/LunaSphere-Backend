@@ -27,6 +27,9 @@ public static class DependencyInjection
         services.AddTransient<IJwtFactory, JwtFactory>();
         services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
+        // Refresh Token configuration
+        services.AddTransient<IRefreshTokenFactory, RefreshTokenFactory>();
+
         // Google auth configuration
         services.Configure<GoogleAuthSettings>(configuration.GetSection("GoogleAuthSettings"));
         services.AddTransient<IGoogleAuthService, GoogleAuthService>();

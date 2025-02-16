@@ -1,4 +1,4 @@
-namespace LunaSphere.Api.ApiMessagesConstants;
+namespace LunaSphere.Application.Constants;
 
 public static partial class ApiMessagesConstants
 {

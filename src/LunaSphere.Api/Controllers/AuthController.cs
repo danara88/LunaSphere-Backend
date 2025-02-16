@@ -8,6 +8,7 @@ using LunaSphere.Application.Auth.Commands.RegisterCommand;
 using LunaSphere.Application.Auth.DTOs;
 using LunaSphere.Application.Auth.Commands.LoginCommand;
 using LunaSphere.Application.Auth.Commands.GoogleSignInCommand;
+using LunaSphere.Application.Auth.Commands.RefreshTokenCommand;
 
 namespace LunaSphere.Controllers;
 
@@ -68,6 +69,24 @@ public class AuthController : ApiController
 
         Func<AuthDTO, IActionResult> response = (authDTO) => 
             Ok(new ApiResponse<AuthDTO>(authDTO));
+        
+        return result.Match(
+            response, 
+            Problem
+        );
+    }
+
+    [HttpPost("~/api/v1/auth/refresh-token")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> RefreshToken([FromBody] CreateRefreshTokenDTO createRefreshTokenDTO)
+    {
+        var command = new RefreshTokenCommand(createRefreshTokenDTO);
+        var result = await _mediator.Send(command);
+
+        Func<RefreshTokenDTO, IActionResult> response = (refreshTokenDTO) => 
+            Ok(new ApiResponse<RefreshTokenDTO>(refreshTokenDTO));
         
         return result.Match(
             response, 

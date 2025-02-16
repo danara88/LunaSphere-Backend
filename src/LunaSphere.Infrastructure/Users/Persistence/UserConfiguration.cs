@@ -1,8 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-using LunaSphere.Domain.User.Enums;
+using LunaSphere.Domain.Users.Enums;
 using LunaSphere.Domain.Users;
+using LunaSphere.Domain.RefreshTokens;
 
 namespace LunaSphere.Infrastructure.Users.Persistence;
 
@@ -19,8 +20,13 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         // Define a unique index on the Email property
         builder.HasIndex(x => x.Email).IsUnique();
 
-        // Applie query filter for isActive property
+        // Apply query filter for isActive property
         builder.HasQueryFilter(x => x.IsActive == true);
+
+        // Apply one to one relationship with RefreshToken table
+        builder.HasOne(u => u.RefreshToken)
+            .WithOne(r => r.User)
+            .HasForeignKey<RefreshToken>(r => r.UserId);
 
         builder.Property(prop => prop.FirstName)
             .HasMaxLength(100)

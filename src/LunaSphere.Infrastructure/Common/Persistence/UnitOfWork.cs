@@ -1,5 +1,7 @@
 using LunaSphere.Application.Common.Interfaces;
+using LunaSphere.Application.RefreshTokens.Interfaces;
 using LunaSphere.Application.Users.Interfaces;
+using LunaSphere.Infrastructure.RefreshTokens.Persistence;
 using LunaSphere.Infrastructure.Users.Persistence;
 
 namespace LunaSphere.Infrastructure.Common.Persistence;
@@ -12,6 +14,7 @@ public class UnitOfWork : IUnitOfWork
 {
     private readonly ApplicationDbContext _context;
     private readonly IUserRepository? _userRepository;
+    private readonly IRefreshTokenRepository? _refreshTokenRepository;
 
     public UnitOfWork(ApplicationDbContext context)
     {
@@ -19,6 +22,8 @@ public class UnitOfWork : IUnitOfWork
     }
 
     public IUserRepository UserRepository => _userRepository ?? new UserRepository(_context);
+
+    public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository ?? new RefreshTokenRepository(_context);
 
     public bool HasChanges()
     {
