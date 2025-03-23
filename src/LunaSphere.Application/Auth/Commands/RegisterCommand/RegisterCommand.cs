@@ -5,4 +5,4 @@ using LunaSphere.Application.Auth.DTOs;
 
 namespace LunaSphere.Application.Auth.Commands.RegisterCommand;
 
-public record RegisterCommand(RegisterUserDTO registerUserDTO) : IRequest<ErrorOr<AuthDTO>> {}
+public record RegisterCommand(RegisterUserDTO registerUserDTO) : IRequest<ErrorOr<string>> {}

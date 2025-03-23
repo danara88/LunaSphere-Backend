@@ -4,6 +4,6 @@ public static partial class ApiMessagesConstants
 {
     public static class Auth
     {
-        // Add your auth api messages here
+         public const string RegisterSuccess = "User registration completed successfully. Account verification in progress.";
     }
 }

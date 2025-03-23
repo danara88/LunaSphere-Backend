@@ -38,6 +38,11 @@ public partial class PasswordHasher : IPasswordHasher
 
     /// <summary>
     /// Gets a strong password regex
+    /// At least one upper case letter
+    /// At least one lower case letter
+    /// At least one digit
+    /// At least one special character
+    /// Minimum 8 characters long
     /// </summary>
     /// <returns></returns>
     [GeneratedRegex("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$", RegexOptions.Compiled)]

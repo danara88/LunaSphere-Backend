@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using System.Net;
 
 using LunaSphere.Api.Controllers;
 using LunaSphere.Api.Responses;
@@ -31,8 +30,8 @@ public class AuthController : ApiController
         var command = new RegisterCommand(registerUserDTO);
         var result = await _mediator.Send(command);
 
-        Func<AuthDTO, IActionResult> response = (authDTO) => 
-            Ok(new ApiResponse<AuthDTO>(authDTO, HttpStatusCode.Created));
+        Func<string, IActionResult> response = (message) => 
+            Ok(new ApiMessageResponse(message));
         
         return result.Match(
             response, 
