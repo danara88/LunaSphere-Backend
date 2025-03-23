@@ -3,18 +3,15 @@ using ErrorOr;
 using System.Security.Cryptography;
 using AutoMapper;
 
-using LunaSphere.Application.Auth.DTOs;
 using LunaSphere.Application.Auth.Interfaces;
 using LunaSphere.Application.Common.Interfaces;
 using LunaSphere.Domain.Users;
-using LunaSphere.Application.Users.DTOs;
 using LunaSphere.Domain.Exceptions;
-using LunaSphere.Domain.RefreshTokens;
 using LunaSphere.Application.Constants;
 
 namespace LunaSphere.Application.Auth.Commands.RegisterCommand;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<AuthDTO>>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<string>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
@@ -36,7 +33,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
         _refreshTokenFactory = refreshTokenFactory;
     }
 
-    public async Task<ErrorOr<AuthDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         if (await _unitOfWork.UserRepository.ExistsByEmailAsync(request.registerUserDTO.Email))
         {
@@ -58,35 +55,23 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<A
             LastLogin = DateTime.UtcNow
         };
 
-        var userDTO = _mapper.Map<UserDTO>(user);
-        var token = _jwtFactory.GenerateJwtToken(user);
-
         await _unitOfWork.UserRepository.AddAsync(user);
-
 
         try
         {
             await _unitOfWork.SaveChangesAsync();
+            // var refreshToken = new RefreshToken
+            // {
+            //     UserId =  user.Id,
+            //     Token = _refreshTokenFactory.GenerateRefreshToken(),
+            //     ExperiesAt = DateTime.UtcNow.AddDays(1)
+            // };
 
-            var refreshToken = new RefreshToken
-            {
-                UserId =  user.Id,
-                Token = _refreshTokenFactory.GenerateRefreshToken(),
-                ExperiesAt = DateTime.UtcNow.AddDays(1)
-            };
+            // await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
 
-            await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            // await _unitOfWork.SaveChangesAsync();
 
-            await _unitOfWork.SaveChangesAsync();
-
-            var authDTO = new AuthDTO
-            (
-                AccessToken: token, 
-                RefreshToken: Guid.NewGuid().ToString(),
-                UserDetails: userDTO
-            );
-
-            return authDTO;
+            return ApiMessagesConstants.Auth.RegisterSuccess;
         }
         catch
         {

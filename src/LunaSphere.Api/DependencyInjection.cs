@@ -97,6 +97,7 @@ public static class DependencyInjection
         {
             build
                 .WithOrigins("*")
+                .AllowAnyHeader()
                 .AllowAnyMethod();
         }));
         return services;
