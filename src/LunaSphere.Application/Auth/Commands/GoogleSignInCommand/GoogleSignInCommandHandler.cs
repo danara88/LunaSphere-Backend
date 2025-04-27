@@ -8,8 +8,8 @@ using LunaSphere.Application.Users.DTOs;
 using LunaSphere.Application.Auth.Interfaces;
 using LunaSphere.Domain.Users;
 using LunaSphere.Domain.Exceptions;
-using LunaSphere.Domain.RefreshTokens;
 using LunaSphere.Application.Constants;
+using LunaSphere.Domain.Users.Events;
 
 namespace LunaSphere.Application.Auth.Commands.GoogleSignInCommand;
 
@@ -46,7 +46,6 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
 
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(googleResp.Value.Email);
 
-        // If user does not exist in the database, create new account
         if (user is null)
         {
             user = new User
@@ -54,32 +53,16 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
                 FirstName = googleResp.Value.Name,
                 LastName = googleResp.Value.FamilyName,
                 Email = googleResp.Value.Email,
-                LastLogin = DateTime.UtcNow,
                 IsGoogle = true,
-                VerifiedAt = DateTime.UtcNow
+                VerifiedAt = DateTime.UtcNow,
             };
 
             await _unitOfWork.UserRepository.AddAsync(user);
+            await _unitOfWork.CommitChangesAsync();
         }
-
+    
         user.LastLogin = DateTime.UtcNow;
-
-        var refreshToken = await _unitOfWork.RefreshTokenRepository.GetByUserIdAsync(user.Id);
-        if (refreshToken is not null) {
-            refreshToken.ExpiresAt = DateTime.UtcNow.AddMinutes(7);
-            refreshToken.Token = _refreshTokenFactory.GenerateRefreshToken();
-        }
-        else
-        {
-            refreshToken = new RefreshToken
-            {
-                UserId = user.Id,
-                Token = _refreshTokenFactory.GenerateRefreshToken(),
-                ExpiresAt = DateTime.UtcNow.AddDays(1)
-            };
-
-            await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
-        }
+        user._domainEvents.Add(new UserSignedInGoogleEvent(user.Id));
 
         try
         {
@@ -88,7 +71,8 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
             var token = _jwtFactory.GenerateJwtToken(user);
             var userDTO = _mapper.Map<UserDTO>(user);
 
-            var authDTO = new AuthDTO(
+            var authDTO = new AuthDTO
+            (
                 AccessToken: token,
                 RefreshToken: "xyz",
                 UserDetails: userDTO
