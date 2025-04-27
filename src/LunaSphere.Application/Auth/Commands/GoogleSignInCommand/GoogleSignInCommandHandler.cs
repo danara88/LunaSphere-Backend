@@ -60,9 +60,11 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
             await _unitOfWork.UserRepository.AddAsync(user);
             await _unitOfWork.CommitChangesAsync();
         }
-    
+
+        string refreshToken = _refreshTokenFactory.GenerateRefreshToken();
+
         user.LastLogin = DateTime.UtcNow;
-        user._domainEvents.Add(new UserSignedInGoogleEvent(user.Id));
+        user._domainEvents.Add(new UserSignedInGoogleEvent(user.Id, refreshToken));
 
         try
         {
@@ -74,7 +76,7 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
             var authDTO = new AuthDTO
             (
                 AccessToken: token,
-                RefreshToken: "xyz",
+                RefreshToken: refreshToken,
                 UserDetails: userDTO
             );
 
