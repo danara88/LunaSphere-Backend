@@ -30,7 +30,7 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, E
     {
         var refreshToken = await _unitOfWork.RefreshTokenRepository.GetByTokenAsync(request.createRefreshTokenDTO.RefreshToken);
 
-        if (refreshToken is null || refreshToken.ExperiesAt < DateTime.UtcNow) 
+        if (refreshToken is null || refreshToken.ExpiresAt < DateTime.UtcNow) 
         {
             return RefreshTokenErrors.RefreshTokenExpired;
         }
@@ -38,11 +38,11 @@ public class RefreshTokenCommandHandler : IRequestHandler<RefreshTokenCommand, E
         var accessToken = _jwtFactory.GenerateJwtToken(refreshToken.User);
 
         refreshToken.Token = _refreshTokenFactory.GenerateRefreshToken();
-        refreshToken.ExperiesAt = DateTime.UtcNow.AddDays(1);
+        refreshToken.ExpiresAt = DateTime.UtcNow.AddDays(1);
 
         try
         {
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitChangesAsync();
             
             var refreshTokenDTO = new RefreshTokenDTO
             (

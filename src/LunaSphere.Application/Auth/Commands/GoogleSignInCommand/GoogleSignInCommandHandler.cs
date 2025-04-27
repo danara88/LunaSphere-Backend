@@ -66,7 +66,7 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
 
         var refreshToken = await _unitOfWork.RefreshTokenRepository.GetByUserIdAsync(user.Id);
         if (refreshToken is not null) {
-            refreshToken.ExperiesAt = DateTime.UtcNow.AddMinutes(7);
+            refreshToken.ExpiresAt = DateTime.UtcNow.AddMinutes(7);
             refreshToken.Token = _refreshTokenFactory.GenerateRefreshToken();
         }
         else
@@ -75,7 +75,7 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
             {
                 UserId = user.Id,
                 Token = _refreshTokenFactory.GenerateRefreshToken(),
-                ExperiesAt = DateTime.UtcNow.AddDays(1)
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
             await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
@@ -83,7 +83,7 @@ public class GoogleSignInCommandHandler : IRequestHandler<GoogleSignInCommand, E
 
         try
         {
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitChangesAsync();
 
             var token = _jwtFactory.GenerateJwtToken(user);
             var userDTO = _mapper.Map<UserDTO>(user);

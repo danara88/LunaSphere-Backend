@@ -23,7 +23,7 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.Property(prop => prop.ExperiesAt)
+        builder.Property(prop => prop.ExpiresAt)
             .IsRequired();
 
         builder.Property(prop => prop.IsActive)

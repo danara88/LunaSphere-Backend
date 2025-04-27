@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.DataProtection;
 using System.Text;
 
 using LunaSphere.Infrastructure.Common.Persistence;
@@ -20,6 +21,7 @@ public static class DependencyInjection
         services.ConfigureControllers();
         services.ConfigureDatabase(configuration);
         services.ConfigureAuthentication(configuration);
+        services.ConfigureDataProtection();
 
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -100,6 +102,15 @@ public static class DependencyInjection
                 .AllowAnyHeader()
                 .AllowAnyMethod();
         }));
+        return services;
+    }
+
+    private static IServiceCollection ConfigureDataProtection(this IServiceCollection services)
+    {
+        // TODO: Imrpove data protection levels adding PersistKeysToFileSystem and ProtectKeysWithCertificate
+        services.AddDataProtection()
+            .SetApplicationName("LunaSphere");
+
         return services;
     }
 }

@@ -8,7 +8,7 @@ namespace LunaSphere.Application.RefreshTokens.Interfaces;
 /// </summary>
 public interface IRefreshTokenRepository : IBaseRepository<RefreshToken> 
 {
-    Task<RefreshToken> GetByTokenAsync(string token);
+    Task<RefreshToken?> GetByTokenAsync(string token);
 
-    Task<RefreshToken> GetByUserIdAsync(int userId);
+    Task<RefreshToken?> GetByUserIdAsync(int userId);
 }

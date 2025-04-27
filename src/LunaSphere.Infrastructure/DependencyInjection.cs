@@ -8,6 +8,8 @@ using LunaSphere.Infrastructure.Common.Persistence;
 using LunaSphere.Infrastructure.Auth.TokenGenerator;
 using LunaSphere.Infrastructure.Auth.PasswordHasher;
 using LunaSphere.Infrastructure.Auth.GoogleAuth;
+using LunaSphere.Infrastructure.Email;
+using LunaSphere.Application.Common.Helpers;
 
 
 namespace LunaSphere.Infrastructure;
@@ -19,7 +21,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddHttpContextAccessor();
+
+        services.AddScoped<IUnitOfWork>(serviceProvider => serviceProvider.GetRequiredService<ApplicationDbContext>());
 
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
 
@@ -33,6 +37,14 @@ public static class DependencyInjection
         // Google auth configuration
         services.Configure<GoogleAuthSettings>(configuration.GetSection("GoogleAuthSettings"));
         services.AddTransient<IGoogleAuthService, GoogleAuthService>();
+
+        // Mail configuration
+        services.Configure<SmtpSettings>(configuration.GetSection("SmtpSettings"));
+        services.AddScoped<IEmailService, EmailService>();
+
+        // Security helper configuration
+        services.Configure<SecuritySettings>(configuration.GetSection("SecuritySettings"));
+        services.AddScoped<ISecurityHelper, SecurityHelper>();
 
         return services;
     }

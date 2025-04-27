@@ -9,7 +9,7 @@ namespace LunaSphere.Infrastructure.Common.Persistence;
 /// Base Repository
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
+public class BaseRepository<T> : IBaseRepository<T> where T : Entity
 {
     protected DbSet<T> _entity;
 

@@ -13,6 +13,10 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
+
+app.AddInfrastructureMiddleware();
+
 app.UseSwagger();
 
 app.UseSwaggerUI();

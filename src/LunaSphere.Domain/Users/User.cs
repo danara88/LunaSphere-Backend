@@ -7,7 +7,7 @@ namespace LunaSphere.Domain.Users;
 /// <summary>
 /// Domain entity representing a User
 /// </summary>
-public class User : BaseEntity
+public class User : Entity
 {
     /// <summary>
     /// User's first name.
@@ -47,13 +47,33 @@ public class User : BaseEntity
     public DateTime? LastLogin { get; set; }
 
     /// <summary>
-    /// Token for verifying the user's account
+    /// Date and time when the last verification email was sent
+    /// </summary>
+    public DateTime? LastVerificationEmailSent { get; set; }
+
+    /// <summary>
+    /// Code for verifying the user's account
     /// </summary>        
+    public short? VerificationCode { get; set; }
+
+     /// <summary>
+    /// Validates if the user has received at least one verification code
+    /// </summary>  
+    public bool FirstVerificationCodeSend { get; set; }
+
+    /// <summary>
+    /// Date and time when the verification code expires
+    /// </summary>        
+    public DateTime? VerificationCodeExpires { get; set; }
+
+    /// <summary>
+    /// Token for verifying the user's account 
+    /// </summary>
     public string? VerificationToken { get; set; }
 
     /// <summary>
     /// Date and time when the verification token expires
-    /// </summary>        
+    /// </summary>
     public DateTime? VerificationTokenExpires { get; set; }
 
     /// <summary>
