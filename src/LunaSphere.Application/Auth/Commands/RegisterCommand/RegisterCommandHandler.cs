@@ -1,46 +1,43 @@
 using MediatR;
 using ErrorOr;
 using System.Security.Cryptography;
-using AutoMapper;
 
-using LunaSphere.Application.Auth.Interfaces;
 using LunaSphere.Application.Common.Interfaces;
 using LunaSphere.Domain.Users;
 using LunaSphere.Domain.Exceptions;
 using LunaSphere.Application.Constants;
+using LunaSphere.Application.Auth.DTOs;
+using LunaSphere.Domain.Users.Events;
+using LunaSphere.Application.Common.Helpers;
 
 namespace LunaSphere.Application.Auth.Commands.RegisterCommand;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<string>>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<RegisterUserDTO>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IPasswordHasher _passwordHasher;
-    private readonly IJwtFactory _jwtFactory;
-    private readonly IMapper _mapper;
-    private readonly IRefreshTokenFactory _refreshTokenFactory;
+    private readonly ISecurityHelper _securityHelper;
 
     public RegisterCommandHandler(
         IUnitOfWork unitOfWork,
         IPasswordHasher passwordHasher,
-        IJwtFactory jwtFactory,
-        IMapper mapper,
-        IRefreshTokenFactory refreshTokenFactory)
+        ISecurityHelper securityHelper
+    )
     {
         _unitOfWork = unitOfWork;
         _passwordHasher = passwordHasher;
-        _jwtFactory = jwtFactory;
-        _mapper = mapper;
-        _refreshTokenFactory = refreshTokenFactory;
+        _securityHelper = securityHelper;
     }
 
-    public async Task<ErrorOr<string>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<RegisterUserDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
-        if (await _unitOfWork.UserRepository.ExistsByEmailAsync(request.registerUserDTO.Email))
+        if (await _unitOfWork.UserRepository.ExistsByEmailAsync(request.createUserAccountDTO.Email))
         {
             return AuthErrors.UserAlreadyRegistered;
         }
 
-        var hashPasswordResult = _passwordHasher.HashPassword(request.registerUserDTO.Password);
+        var hashPasswordResult = _passwordHasher.HashPassword(request.createUserAccountDTO.Password);
+
         if(hashPasswordResult.IsError)
         {
             return hashPasswordResult.Errors;
@@ -48,38 +45,47 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, ErrorOr<s
 
         var user = new User
         {
-            Email = request.registerUserDTO.Email,
+            Email = request.createUserAccountDTO.Email,
             PasswordHash = hashPasswordResult.Value,
-            VerificationToken = CreateRandomeToken(),
-            VerificationTokenExpires = DateTime.UtcNow.AddDays(2),
-            LastLogin = DateTime.UtcNow
+            VerificationCode = CreateRandomCode(),
+            VerificationCodeExpires = DateTime.UtcNow.AddMinutes(1),
+            VerificationToken = CreateRandomToken(),
+            VerificationTokenExpires = DateTime.UtcNow.AddMinutes(5),
+            LastVerificationEmailSent = DateTime.UtcNow
         };
 
         await _unitOfWork.UserRepository.AddAsync(user);
 
         try
         {
-            await _unitOfWork.SaveChangesAsync();
-            // var refreshToken = new RefreshToken
-            // {
-            //     UserId =  user.Id,
-            //     Token = _refreshTokenFactory.GenerateRefreshToken(),
-            //     ExperiesAt = DateTime.UtcNow.AddDays(1)
-            // };
+            await _unitOfWork.CommitChangesAsync();
 
-            // await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
+            user._domainEvents.Add(new UserRegisteredEvent(user.Id));
 
-            // await _unitOfWork.SaveChangesAsync();
-
-            return ApiMessagesConstants.Auth.RegisterSuccess;
+            await _unitOfWork.CommitChangesAsync();
+            
+            return new RegisterUserDTO
+            (
+                VerificationToken: _securityHelper.EncryptString(user.VerificationToken),
+                VerificationTokenExpires:  _securityHelper.EncryptString(user.VerificationTokenExpires.ToString()!)
+            );
         }
         catch
         {
-            throw new InternalServerException(ApiMessagesConstants.Global.InternalServerError);
+            throw new InternalServerException(ApiMessagesConstants.Auth.RegisterFail);
         }
-
     }
 
-     private string CreateRandomeToken() => Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
-    
+    private short CreateRandomCode() 
+    {
+        int min = 1000;
+        int max = 9999;
+        Random random = new Random();
+        return (short)random.Next(min, max);
+    }
+
+    private string CreateRandomToken()
+    {
+        return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+    }
 }

@@ -33,9 +33,9 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2025, 2, 14, 20, 39, 50, 199, DateTimeKind.Utc).AddTicks(8680));
+                        .HasDefaultValue(new DateTime(2025, 4, 11, 0, 18, 41, 450, DateTimeKind.Utc).AddTicks(4570));
 
-                    b.Property<DateTime>("ExperiesAt")
+                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsActive")
@@ -77,7 +77,7 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValue(new DateTime(2025, 2, 14, 20, 39, 50, 200, DateTimeKind.Utc).AddTicks(840));
+                        .HasDefaultValue(new DateTime(2025, 4, 11, 0, 18, 41, 450, DateTimeKind.Utc).AddTicks(7040));
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -88,6 +88,11 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<string>("FirstName")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("FirstVerificationCodeSend")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
@@ -105,6 +110,9 @@ namespace LunaSphere.Infrastructure.Migrations
                     b.Property<string>("LastName")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime?>("LastVerificationEmailSent")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -125,6 +133,12 @@ namespace LunaSphere.Infrastructure.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<short?>("VerificationCode")
+                        .HasColumnType("SMALLINT");
+
+                    b.Property<DateTime?>("VerificationCodeExpires")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("VerificationToken")

@@ -8,9 +8,11 @@ namespace LunaSphere.Application.Users.Interfaces;
 /// </summary>
 public interface IUserRepository : IBaseRepository<User>
 {
-    Task<User> GetByEmailAsync(string email);
+    Task<User?> GetByEmailAsync(string email);
 
     Task<bool> ExistsByEmailAsync(string email);
 
-    Task<User> GetByVerificationTokenAsync(string verificationToken);
+    Task<User?> GetByVerificationCodeAsync(short verificationCode);
+
+    Task<User?> GetByVerificationTokenAsync(string verificationToken);
 }

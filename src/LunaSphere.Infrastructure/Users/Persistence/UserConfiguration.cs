@@ -56,9 +56,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(prop => prop.LastLogin)
             .IsRequired(false);
+        
+        builder.Property(prop => prop.LastVerificationEmailSent)
+            .IsRequired(false);
 
-        builder.Property(prop => prop.VerificationToken)
+        builder.Property(prop => prop.VerificationCode)
+            .HasColumnType("SMALLINT")
+            .IsRequired(false);
+
+        builder.Property(prop => prop.VerificationCodeExpires)
+            .IsRequired(false);
+        
+        builder.Property(prop => prop.FirstVerificationCodeSend)
+            .HasDefaultValue(false)
+            .IsRequired();
+
+         builder.Property(prop => prop.VerificationToken)
             .IsUnicode(false)
+            .IsRequired(false);
+        
+        builder.Property(prop => prop.VerificationTokenExpires)
             .IsRequired(false);
 
         builder.Property(prop => prop.VerifiedAt)

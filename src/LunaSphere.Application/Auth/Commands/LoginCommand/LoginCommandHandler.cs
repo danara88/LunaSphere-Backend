@@ -58,7 +58,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AuthDTO
         if (refreshToken is not null) 
         {
             refreshToken.Token = _refreshTokenFactory.GenerateRefreshToken();
-            refreshToken.ExperiesAt = DateTime.UtcNow.AddMinutes(7);
+            refreshToken.ExpiresAt = DateTime.UtcNow.AddMinutes(7);
         }
         else
         {
@@ -66,7 +66,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AuthDTO
             {
                 UserId = user.Id,
                 Token = _refreshTokenFactory.GenerateRefreshToken(),
-                ExperiesAt = DateTime.UtcNow.AddDays(1)
+                ExpiresAt = DateTime.UtcNow.AddDays(1)
             };
 
             await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
@@ -74,7 +74,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, ErrorOr<AuthDTO
 
         try
         {
-            await _unitOfWork.SaveChangesAsync();
+            await _unitOfWork.CommitChangesAsync();
             var authDTO = new AuthDTO 
             (
                 AccessToken: token,

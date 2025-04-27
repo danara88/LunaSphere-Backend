@@ -6,7 +6,7 @@ namespace LunaSphere.Application.Common.Interfaces;
 /// Base repository interface.
 /// This include basic CRUD methods.
 /// </summary>
-public interface IBaseRepository<T> where T : BaseEntity
+public interface IBaseRepository<T> where T : Entity
 {
     Task<IEnumerable<T>> GetAllAsync(int pageNumber, int pageSize);
 

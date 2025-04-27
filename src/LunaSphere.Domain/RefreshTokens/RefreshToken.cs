@@ -6,7 +6,7 @@ namespace LunaSphere.Domain.RefreshTokens;
 /// <summary>
 /// Domain entity representing a RefreshToken
 /// </summary>
-public class RefreshToken : BaseEntity
+public class RefreshToken : Entity
 {
     /// <summary>
     /// Represents the user's ID
@@ -21,7 +21,7 @@ public class RefreshToken : BaseEntity
     /// <summary>
     /// Indicates the expiration date and time for the refresh token
     /// </summary>
-    public DateTime ExperiesAt { get; set; }
+    public DateTime ExpiresAt { get; set; }
 
     /// <summary>
     /// User navigation property

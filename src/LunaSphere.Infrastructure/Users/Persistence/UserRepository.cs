@@ -23,16 +23,24 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     /// <summary>
     /// Method to find a user by email address
     /// </summary>
-    public async Task<User> GetByEmailAsync(string email)
+    public async Task<User?> GetByEmailAsync(string email)
     {
         return await _entity.FirstOrDefaultAsync(u => u.Email == email);
     }
 
     /// <summary>
+    /// Method to find a user by verification code 
+    /// </summary>
+    public async Task<User?> GetByVerificationCodeAsync(short verificationCode)
+    {
+        return await _entity.FirstOrDefaultAsync(u => u.VerificationCode == verificationCode);
+    }
+
+    /// <summary>
     /// Method to find a user by verification token 
     /// </summary>
-    public async Task<User> GetByVerificationTokenAsync(string verificationToken)
+    public async Task<User?> GetByVerificationTokenAsync(string verificationToken)
     {
-        return await _entity.FirstOrDefaultAsync(u => u.VerificationToken == verificationToken);
+         return await _entity.FirstOrDefaultAsync(u => u.VerificationToken == verificationToken);
     }
 }

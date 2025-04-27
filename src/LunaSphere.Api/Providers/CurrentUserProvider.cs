@@ -1,8 +1,9 @@
 using System.Security.Claims;
+using ErrorOr;
 
 using LunaSphere.Application.Users.DTOs;
 using LunaSphere.Application.Users.Interfaces;
-using LunaSphere.Domain.Exceptions;
+using LunaSphere.Domain.Users;
 
 namespace LunaSphere.Api.Providers;
 
@@ -18,27 +19,46 @@ public class CurrentUserProvider : ICurrentUserProvider
         _httpContextAccesor = httpContextAccesor;
     }
 
-    public CurrentUserDTO GetCurrentUser()
+    public ErrorOr<CurrentUserDTO> GetCurrentUser()
     {
         if (_httpContextAccesor.HttpContext is null)
         {
-            throw new InternalServerException("Something went wrong.");
+            return AuthErrors.UserIsNotAuthenticated;
         }
 
-        var id = GetClaimValues("id")
+        var idClaimValue = GetClaimValues("id");
+
+        if(idClaimValue.IsError)
+        {
+            return AuthErrors.UserIsNotAuthenticated;
+        }
+
+        var id = idClaimValue.Value
             .Select(int.Parse)
             .First();
 
-        var roles = GetClaimValues(ClaimTypes.Role);
+        var rolesClaimValue = GetClaimValues(ClaimTypes.Role);
+
+        if(rolesClaimValue.IsError)
+        {
+            return AuthErrors.UserForbiddenAction;
+        }
 
         return new CurrentUserDTO(
             Id: id,
-            Roles: roles
+            Roles: rolesClaimValue.Value
         );
     }
 
-    private IReadOnlyList<string> GetClaimValues(string claimType)
+    private  ErrorOr<IReadOnlyList<string>> GetClaimValues(string claimType)
     {
+        var claims = _httpContextAccesor.HttpContext!.User.Claims.ToList();
+
+        if(claims.Count == 0)
+        {
+            return Error.NotFound();
+        }
+
         return _httpContextAccesor.HttpContext!.User.Claims
             .Where(claim => claim.Type == claimType)
             .Select(claim => claim.Value)
