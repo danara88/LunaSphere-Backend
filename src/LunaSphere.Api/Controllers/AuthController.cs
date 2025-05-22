@@ -119,7 +119,7 @@ public class AuthController : ApiController
     [HttpPost("~/api/v1/auth/user-eligible-for-verification")]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UserEligibleForVerification([FromQuery] UserEligibleForVerificationDTO userEligibleForVerificationDTO)
+    public async Task<IActionResult> UserEligibleForVerification([FromBody] UserEligibleForVerificationDTO userEligibleForVerificationDTO)
     {
         var command = new UserEligibleForAccountVerificationCommand(userEligibleForVerificationDTO);
         var result = await _mediator.Send(command);
