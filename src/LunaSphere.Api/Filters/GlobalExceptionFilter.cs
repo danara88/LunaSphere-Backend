@@ -29,6 +29,7 @@ public class GlobalExceptionFilter : IExceptionFilter
 
             var error = new ApiFailure
             {
+                Title = "Internal Server Error",
                 Detail = exception.Message,
                 Status = (int)HttpStatusCode.InternalServerError,
                 Success = false
